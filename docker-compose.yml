@@ -12,10 +12,10 @@ services:
       JWT_SECRET: "your-jwt-secret"
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
-      REDIS_PASSWORD: "your-redis-password" # Set your Redis password if needed
-      NODE_ENV: "development" # Set your environment (development/production)
-      JWT_EXPIRES_IN: "1h" # Set your JWT expiration
-      PORT: "3000" # Set your port
+      REDIS_PASSWORD: "your-redis-password"
+      NODE_ENV: "development"
+      JWT_EXPIRES_IN: "1h"
+      PORT: "3000"
     depends_on:
       - mongo
       - redis
