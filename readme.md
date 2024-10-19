@@ -152,14 +152,6 @@ REDIS_PORT=6379
 REDIS_PASSWORD=yourredispassword
 ```
 
-## Seed Data
-
-you can run the script below, in case you want to pass your DB_URL, this script seeds the DB with data.
-
-```bash
-npm run seed
-```
-
 ## Rate Limiting
 
 To prevent abuse, rate limiting is applied to user account API access. This can be configured in the application settings.
