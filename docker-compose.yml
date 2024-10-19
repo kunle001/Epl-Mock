@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DB_URL: "mongodb+srv://user:ghtSsuNLvOnCulad@cluster0.i2fwd.mongodb.net/"
+      REDIS_URL: "redis://default:redispassword@redis:6379"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: "redispassword"
+      NODE_ENV: "development"
+      JWT_SECRET: "TruhishWQIOH"
+      JWT_EXPIRES_IN: "1d"
+      REQUEST_PER_MINUTE: 7 #rate limit per minute
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  redis:
+    image: redis:6.2
+    restart: always
+    command: redis-server --requirepass redispassword
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
