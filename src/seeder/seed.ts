@@ -7,8 +7,7 @@ dotenv.config();
 
 // Connect to MongoDB
 const connectDb = async () => {
-  const MONGO_URI =
-    process.env.DB_URL || "mongodb://localhost:27017/mock-premier-league";
+  const MONGO_URI = process.env.DB_URL!;
   await mongoose.connect(MONGO_URI);
   console.log("Connected to MongoDB...");
 };

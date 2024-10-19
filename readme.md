@@ -4,7 +4,7 @@ Doc
 
 # Mock Premier League API
 
-This is a software developer test project to create an API that manages and serves the latest scores and fixtures of a “Mock Premier League.” The API allows admins to manage teams and fixtures, while users can view completed and pending fixtures and search for teams and matches.
+This test project is to create an API that manages and serves the latest scores and fixtures of a “Mock Premier League.” The API allows admins to manage teams and fixtures, while users can view completed and pending fixtures and search for teams and matches.
 
 ## Features
 
@@ -82,6 +82,7 @@ docker-compose up
 ```
 
 This will start both the API and the Redis service.
+NB: Ensure that the port you will be exposing the app to is not already in use
 
 The API will be available at `http://localhost:your-port` (replace `your-port` with the specified port in your Docker config).
 
@@ -166,7 +167,7 @@ To prevent abuse, rate limiting is applied to user account API access. This can 
 ## Deployment
 
 1. Ensure the API is containerized using Docker.
-2. Api is Available on [live api url](https://heroku.com).
+2. Api is Available on [live api url](https://epl-mock.onrender.com).
 3. Push the code to your Git repository (preferably GitHub).
 
 ## License
