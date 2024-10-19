@@ -7,24 +7,35 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DB_URL: "mongodb+srv://user:ghtSsuNLvOnCulad@cluster0.i2fwd.mongodb.net/"
-      REDIS_URL: "redis://default:redispassword@redis:6379"
+      DB_URL: "mongodb://root:example@mongo:27017/your-database?authSource=admin"
+      REDIS_URL: "redis://redis:6379"
+      JWT_SECRET: "your-jwt-secret"
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
-      REDIS_PASSWORD: "redispassword"
-      NODE_ENV: "development"
-      JWT_SECRET: "TruhishWQIOH"
-      JWT_EXPIRES_IN: "1d"
-      REQUEST_PER_MINUTE: 7 #rate limit per minute
+      REDIS_PASSWORD: "your-redis-password" # Set your Redis password if needed
+      NODE_ENV: "development" # Set your environment (development/production)
+      JWT_EXPIRES_IN: "1h" # Set your JWT expiration
+      PORT: "3000" # Set your port
     depends_on:
+      - mongo
       - redis
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:5.0
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     networks:
       - app-network
 
   redis:
     image: redis:6.2
     restart: always
-    command: redis-server --requirepass redispassword
     ports:
       - "6379:6379"
     networks:
