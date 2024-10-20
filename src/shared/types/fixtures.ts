@@ -22,5 +22,6 @@ export interface UpdateFixtureAttr {
   homeTeam?: string;
   awayTeam?: number;
   score?: { home: number; away: number };
+  status: "started" | "completed";
   date?: Date;
 }

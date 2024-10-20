@@ -6,7 +6,7 @@ import request from "supertest";
 describe("Fixture Service", () => {
   describe("Creating Fixture", () => {
     it("should throw an error if a similar fixture already exists with a message :'this fixture already exists'", async () => {
-      // create a test feature
+      // create a test fixture
       const teamA = await global.createTestTeam({
         name: "Manchester United",
         stadium: "Old trafford",
@@ -275,7 +275,45 @@ describe("Fixture Service", () => {
         .expect(400);
       //   console.log(response.body);
       expect(response.body.message).toBe(
-        "Game has not started, you cannot update scores yet"
+        "Game has not started, you cannot update scores yet or set as completed"
+      );
+    });
+
+    it("should throw an error if trying to update status of game to completed before the game starts", async () => {
+      const teamA = await global.createTestTeam({
+        name: "Manchester United",
+        stadium: "Old trafford",
+        manager: "Ten Hag",
+        logo: "team-logo",
+      });
+
+      const teamB = await global.createTestTeam({
+        name: "Chelsea FC",
+        stadium: "Stamford Bridge",
+        manager: "Pochetino",
+        logo: "team-logo",
+      });
+
+      const data: FixtureAttr = {
+        homeTeam: teamA.id,
+        awayTeam: teamB.id,
+        date: new Date("2027-08-08"),
+      };
+
+      const fixture = await global.createTestFixture(data);
+
+      const adminId = new mongoose.Types.ObjectId().toHexString();
+      const adminJwtKey = await global.signin(adminId, "admin");
+      const response = await request(app)
+        .patch(`/api/v1/fixture/${fixture.id}`)
+        .set("Authorization", adminJwtKey)
+        .send({
+          status: "completed",
+        })
+        .expect(400);
+      //   console.log(response.body);
+      expect(response.body.message).toBe(
+        "Game has not started, you cannot update scores yet or set as completed"
       );
     });
 

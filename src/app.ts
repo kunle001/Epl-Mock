@@ -6,11 +6,12 @@ import cors from "cors";
 import AppError from "./shared/utils/appError";
 import { errorController } from "./controllers/errorhandler.controller";
 import { AllRoutes } from "./routes";
-import { currentUser } from "./middlewares/authMiddleware";
+import { currentUser } from "./shared/middlewares/authMiddleware";
 import rateLimit from "express-rate-limit";
 
 const app = express();
 dotenv.config();
+
 // Rate limiting middleware
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute window

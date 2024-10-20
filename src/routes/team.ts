@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { requireAuth, RestrictAccessto } from "../middlewares/authMiddleware";
+import {
+  requireAuth,
+  RestrictAccessto,
+} from "../shared/middlewares/authMiddleware";
 import { validateRequest, ValidationSchema } from "../shared/utils/validators";
 import { TeamController } from "../controllers/team.controller";
 

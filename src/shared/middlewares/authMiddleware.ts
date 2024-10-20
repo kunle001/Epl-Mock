@@ -3,7 +3,7 @@ import { catchAsync } from "../utils/catchAsync";
 import { UserPayload } from "../utils/validators";
 import AppError from "../utils/appError";
 import jwt from "jsonwebtoken";
-import { redisService } from "../utils/redis";
+import { redisService as redisCache } from "../utils/redis";
 
 export const currentUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +21,7 @@ export const currentUser = catchAsync(
     }
 
     // Fetch the token from Redis using the user ID
-    const redisToken = await redisService.get(decoded.id);
+    const redisToken = await redisCache.get(decoded.id);
 
     // Check if the token from Redis matches the one in the request
     if (!redisToken || redisToken !== token) {
@@ -38,7 +38,7 @@ export const currentUser = catchAsync(
 export const requireAuth = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     if (!req.currentUser) {
-      throw new AppError("Please login", 403);
+      throw new AppError("Please login", 401);
     }
     next();
   }
@@ -59,4 +59,6 @@ declare global {
       currentUser?: UserPayload;
     }
   }
+  var JWT_SECRET: "testsecret";
+  var JWT_EXPIRES_IN: "1d";
 }

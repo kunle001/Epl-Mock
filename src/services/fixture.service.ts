@@ -49,15 +49,26 @@ export class FixtureService {
     return fixture.save();
   }
 
-  static async updateFixture(id: string, data: UpdateFixtureAttr) {
+  static async updateFixture(
+    id: string,
+    data: UpdateFixtureAttr
+  ): Promise<FixtureDoc> {
     // Check if the game has started before updating the score
     const fixture = await Fixture.findById(id);
     if (!fixture) {
       throw new AppError("fixture not found", 404);
     }
-    if (data.score && new Date(fixture.date).getTime() > Date.now()) {
+
+    // Check if score or status update is valid based on the fixture's date
+    const hasInvalidScoreUpdate =
+      data.score && new Date(fixture.date).getTime() > Date.now();
+    const isInvalidCompletion =
+      data.status === "completed" &&
+      new Date(fixture.date).getTime() > Date.now();
+
+    if (hasInvalidScoreUpdate || isInvalidCompletion) {
       throw new AppError(
-        "Game has not started, you cannot update scores yet",
+        "Game has not started, you cannot update scores yet or set as completed",
         400
       );
     }
@@ -106,71 +117,65 @@ export class FixtureService {
     to_date?: string;
     status?: string;
     team_name?: string;
-  }) {
-    // Convert date strings to Date objects, or set default values
-    let fromDate = from_date
+  }): Promise<FixtureDoc[]> {
+    const now = new Date();
+
+    // Parse and validate date ranges with defaults if missing
+    const fromDate = from_date
       ? new Date(from_date)
-      : new Date(
-          new Date().getFullYear() - 5,
-          new Date().getMonth(),
-          new Date().getDate()
-        );
-
-    let toDate = to_date
+      : new Date(now.getFullYear() - 5, now.getMonth(), now.getDate());
+    const toDate = to_date
       ? new Date(to_date)
-      : new Date(
-          new Date().getFullYear() + 5,
-          new Date().getMonth(),
-          new Date().getDate()
-        );
-    // Convert page and limit to numbers for pagination
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
+      : new Date(now.getFullYear() + 5, now.getMonth(), now.getDate());
 
-    // Calculate the number of records to skip for pagination
-    const skip = (pageNumber > 0 ? pageNumber - 1 : 0) * limitNumber;
+    // Validate if fromDate and toDate are valid Date objects
+    if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+      throw new AppError("Invalid date format", 400);
+    }
 
-    // Build the query object with date range
-    let query: any = {
+    // Validate and parse pagination details
+    const pageNumber = Math.max(parseInt(page, 10), 1); // Ensure a minimum of page 1
+    const limitNumber = Math.max(parseInt(limit, 10), 1); // Ensure at least 1 item per page
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Construct the base query with the date range
+    const query: Record<string, any> = {
       date: {
         $gte: fromDate,
         $lte: toDate,
       },
     };
 
-    // Filter by status if provided
+    // Add status filter if provided
     if (status) {
       query.status = status;
     }
 
-    // Filter by team name (home or away) if provided
+    // If team_name is provided, build a team search query
     if (team_name) {
       const searchRegex = new RegExp(team_name, "i");
 
-      // Query for teams matching the team name
+      // Find matching teams by name, stadium, or manager
       const teams = await Team.find({
         $or: [
           { name: searchRegex },
           { stadium: searchRegex },
           { manager: searchRegex },
         ],
-      });
+      }).select("_id");
 
-      // If no teams are found, return an empty array
-      if (teams.length === 0) {
-        return [];
-      }
+      // If no teams match, return early with an empty result
+      if (!teams.length) return [];
 
-      // Get all team IDs that match the search
+      // Extract team IDs and apply them to the fixture query
       const teamIds = teams.map((team) => team._id);
-      // Add to the query to match fixtures with those teams
       query.$or = [
         { homeTeam: { $in: teamIds } },
         { awayTeam: { $in: teamIds } },
       ];
     }
 
-    // Execute the query with pagination, populate team names, and filter by criteria
+    // Fetch and paginate the fixtures, populating team details
     const fixtures = await Fixture.find(query)
       .populate("homeTeam awayTeam", "name")
       .skip(skip)

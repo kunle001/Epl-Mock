@@ -140,6 +140,7 @@ The following environment variables must be configured:
 - `REDIS_HOST`: Redis server host.
 - `REDIS_PORT`: Redis server port.
 - `REDIS_PASSWORD`: Redis server password.
+- `REQUEST_PER_MINUTE`: Rate Limiting param, which declares how many request per minute you want the API to take per minute from same user/IP.
 
 Example `.env` file:
 
@@ -150,6 +151,7 @@ DB_URL=mongodb://localhost:27017/mock-premier-league
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=yourredispassword
+REQUEST_PER_MINUTE= 10
 ```
 
 ## Rate Limiting

@@ -69,13 +69,14 @@ export class ValidationSchema {
   // Validator for UpdateFixtureAttr (partial fields)
   public updateFixture(): Schema {
     return Joi.object({
-      homeTeam: this.mediumTextRq().optional(), // Optional if it's a partial update
-      awayTeam: this.mediumTextRq().optional(), // Optional if it's a partial update
+      homeTeam: this.mediumTextRq().optional(),
+      awayTeam: this.mediumTextRq().optional(),
+      status: Joi.string().valid("started", "completed").optional(),
       score: Joi.object({
-        home: Joi.number().optional(), // Ensure to call the number function and make it optional
+        home: Joi.number().optional(),
         away: Joi.number().optional(),
-      }).optional(), // Make the score object optional
-      date: Joi.date().optional(), // Optional for partial updates
+      }).optional(),
+      date: Joi.date().optional(),
     });
   }
 }
