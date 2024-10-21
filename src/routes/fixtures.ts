@@ -10,8 +10,8 @@ const router = Router();
 const validator = new ValidationSchema();
 
 router.route("/search").get(FixtureController.search);
-router.use(requireAuth);
 
+router.use(requireAuth);
 router.route("/:fixtureId").get(FixtureController.getFixture);
 router.route("/").get(FixtureController.getFixtures);
 
