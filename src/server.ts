@@ -2,10 +2,12 @@ import { app } from "./app";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import { redisService } from "./shared/utils/redis";
+import { loadEnvVariables, PORT } from "./config/env.config";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+// check that all env variables a set
+loadEnvVariables();
 
 // Connect to your database
 connectDB();

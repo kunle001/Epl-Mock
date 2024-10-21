@@ -59,6 +59,4 @@ declare global {
       currentUser?: UserPayload;
     }
   }
-  var JWT_SECRET: "testsecret";
-  var JWT_EXPIRES_IN: "1d";
 }

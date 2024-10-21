@@ -1,17 +1,19 @@
 import Redis from "ioredis";
 import dotenv from "dotenv";
+import {
+  REDIS_HOST,
+  REDIS_PASSWORD,
+  REDIS_PORT,
+} from "../../config/env.config";
 dotenv.config();
 class RedisService {
   private client: Redis;
 
   constructor() {
     this.client = new Redis({
-      host:
-        process.env.REDIS_HOST ||
-        "redis-16644.c9.us-east-1-2.ec2.redns.redis-cloud.com",
-      port: parseInt(process.env.REDIS_PORT || "16644", 10),
-      password:
-        process.env.REDIS_PASSWORD || "WIceaDIDTv66a5MZQKT5PtiPoIyk8h7U",
+      host: REDIS_HOST,
+      port: parseInt(REDIS_PORT, 10),
+      password: REDIS_PASSWORD,
     });
     console.log("====Redis Cache Connected====");
   }

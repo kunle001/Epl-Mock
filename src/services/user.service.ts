@@ -4,6 +4,7 @@ import AppError from "../shared/utils/appError";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { redisService } from "../shared/utils/redis"; // Use the RedisCache instance
+import { JWT_EXPIRES_IN, JWT_SECRET } from "../config/env.config";
 
 export class UserService {
   static async addUser(data: UserAttr) {
@@ -21,8 +22,8 @@ export class UserService {
     // generate jwt token
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET! || global.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || global.JWT_EXPIRES_IN }
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
     );
 
     // save session in Redis using redisCache
@@ -55,8 +56,8 @@ export class UserService {
         email: existingUser.email,
         role: existingUser.role,
       },
-      process.env.JWT_SECRET || global.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || global.JWT_EXPIRES_IN }
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
     );
 
     // save session in Redis using redisCache

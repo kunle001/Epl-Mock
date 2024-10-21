@@ -3,11 +3,12 @@ import { Team } from "../models/team";
 import { Fixture } from "../models/fixture";
 import { User } from "../models/user";
 import dotenv from "dotenv";
+import { DB_URL } from "../config/env.config";
 dotenv.config();
 
 // Connect to MongoDB
 const connectDb = async () => {
-  const MONGO_URI = process.env.DB_URL!;
+  const MONGO_URI = DB_URL!;
   await mongoose.connect(MONGO_URI);
   console.log("Connected to MongoDB...");
 };

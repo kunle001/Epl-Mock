@@ -9,6 +9,7 @@ import { Fixture } from "../../models/fixture";
 import { TeamAttr, TeamDoc } from "../../shared/types/team";
 import { Team } from "../../models/team";
 import { redisService } from "../../shared/utils/redis";
+import { JWT_EXPIRES_IN, JWT_SECRET } from "../../config/env.config";
 
 dotenv.config();
 
@@ -26,16 +27,11 @@ let mongo: any;
 // jest.mock("../../shared/utils/redis");
 
 beforeAll(async () => {
-  process.env.JWT_SECRET = "ajwtsecret";
-  process.env.JWT_EXPIRES_IN = "1d";
   mongo = new MongoMemoryServer();
   await mongo.start();
   const mongoUri = mongo.getUri();
 
-  await mongoose.connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  } as ConnectOptions);
+  await mongoose.connect(mongoUri);
 });
 
 beforeEach(async () => {
@@ -66,8 +62,8 @@ global.signin = async (Id?: string, role?: string): Promise<string> => {
       email: "admin@email.com",
       role,
     },
-    process.env.JWT_SECRET!,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
+    JWT_SECRET!,
+    { expiresIn: JWT_EXPIRES_IN }
   );
 
   await redisService.set(id, token, 60 * 60 * 24); // token expires in 1 day
