@@ -5,6 +5,7 @@ import request from "supertest";
 
 describe("TeamService", () => {
   describe("Add Team", () => {
+    // Test case: Should throw an error if team data is incomplete/invalid (e.g., missing manager field)
     it("should throw an error if team data is invalid", async () => {
       const adminId = new mongoose.Types.ObjectId().toHexString();
       const adminKey = await global.signin(adminId, "admin");
@@ -21,6 +22,7 @@ describe("TeamService", () => {
 
       expect(response.body.message).toBe('"manager" is required');
     });
+
     it("throw error if team name already exists", async () => {
       const name = "Test Team";
       const adminId = new mongoose.Types.ObjectId().toHexString();
